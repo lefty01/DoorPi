@@ -37,15 +37,15 @@ def ips_rpc_fire(method, config, *parameters):
 def ips_rpc_check_variable_exists(key, config = None):
     if config is None: config = ips_rpc_create_config()
     response = ips_rpc_fire('IPS_VariableExists', config, key)
-    return response.json['result']
+    return response.json()['result']
 
 def ips_rpc_get_variable_type(key, config = None):
     if config is None: config = ips_rpc_create_config()
     response = ips_rpc_fire('IPS_GetVariable', config, key)
-    return response.json['result']['VariableType']
+    return response.json()['result']['VariableType']
 
 def ips_rpc_set_value(key, value, config = None):
-    try:
+    try:result
         if config is None: config = ips_rpc_create_config()
         if ips_rpc_check_variable_exists(key, config) is not True: raise Exception("var %s doesn't exist", key)
         type = ips_rpc_get_variable_type(key, config)

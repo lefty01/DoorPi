@@ -37,17 +37,17 @@ def ips_rpc_fire(method, config, *parameters):
 def ips_rpc_check_variable_exists(key, config = None):
     if config is None: config = ips_rpc_create_config()
     response = ips_rpc_fire('IPS_VariableExists', config, key)
-    return response.json['result']
+    return response.json()['result']
 
 def ips_rpc_get_variable_type(key, config = None):
     if config is None: config = ips_rpc_create_config()
     response = ips_rpc_fire('IPS_GetVariable', config, key)
-    return response.json['result']['VariableType']
+    return response.json()['result']['VariableType']
 
 def ips_rpc_get_variable_value(key, config = None):
     if config is None: config = ips_rpc_create_config()
-    response = ips_rpc_fire('GetValue', config, key)
-    return response.json['result']
+    response = ips_rpc_fire('GetValue',
+    return response.json()['result']
 
 def ips_rpc_call_phonenumber_from_variable(key, config = None):
     try:
