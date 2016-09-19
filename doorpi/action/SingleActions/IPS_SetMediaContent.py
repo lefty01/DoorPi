@@ -47,14 +47,13 @@ def IPS_SetMediaContent(key):
         # http://www.ip-symcon.de/service/dokumentation/befehlsreferenz/variablenverwaltung/ips-getvariable/
         # Variablentyp (0: Boolean, 1: Integer, 2: Float, 3: String)
         elif type == 1:
-            stream = BytesIO()
+            image = open('image.jpg', 'wb')
             camera = PiCamera()
             camera.start_preview()
             sleep(2)
-            camera.capture(stream, format='jpeg')
-            # "Rewind" the stream to the beginning so we can read its content
-            stream.seek(0)
-            value = base64.b64encode(str(Image.open(stream)))
+            camera.capture(image)
+            image.close()
+            value = base64.b64encode(str(image))
             IPS('IPS_SetMediaContent', key, value)
             camera.close()
     except Exception as ex:
