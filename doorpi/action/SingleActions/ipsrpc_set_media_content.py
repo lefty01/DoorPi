@@ -34,7 +34,11 @@ def ips_rpc_get_variable_type(key):
     response = ips_rpc_fire('IPS_GetVariable', key)
     return response.json()['result']['VariableType']
 
-def ips_rpc_set_value(key, value):
+def ips_rpc_get_variable_value(key):
+    response = ips_rpc_fire('GetValue', key)
+    return response.json()['result']
+
+def ips_rpc_set_media_content(key, value):
     try:
         if ips_rpc_check_variable_exists(key) is not True: raise Exception("var %s doesn't exist", key)
         type = ips_rpc_get_variable_type(key)
@@ -47,8 +51,8 @@ def ips_rpc_set_value(key, value):
         elif type == 1: value = int(value)
         elif type == 2: value = float(value)
         elif type == 3: value = str(value)
-        else: value = str(value)
-        ips_rpc_fire('SetValue', key, value)
+        else: value = str(
+        ips_rpc_fire('IPS_SetMediaContent', key, value)
     except Exception as ex:
         logger.exception("couldn't send IpsRpc (%s)", ex)
         return False
@@ -61,7 +65,7 @@ def get(parameters):
     key = int(parameter_list[0])
     value = parameter_list[1]
 
-    return IpsRpcSetValueAction(ips_rpc_set_value, key, value)
+    return IpsRpcSetMediaContentAction(ips_rpc_set_media_content, key, value)
 
-class IpsRpcSetValueAction(SingleAction):
+class IpsRpcSetMediaContentAction(SingleAction):
     pass
