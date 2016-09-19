@@ -9,6 +9,7 @@ import doorpi
 import requests
 import json
 import base64
+import datetime
 from io import BytesIO
 from time import sleep
 from picamera import PiCamera
@@ -18,17 +19,15 @@ from doorpi.action.base import SingleAction
 
 CONFIG = doorpi.DoorPi().config
 
+def get_file_name():
+    return datetime.datetime.now().strftime("%Y-%m-%d_%H.%M.%S.jpg")
+
 def IPS(method, *parameters):
     url = CONFIG.get('IP-Symcon', 'server')
     auth=HTTPBasicAuth(CONFIG.get('IP-Symcon', 'username'), CONFIG.get('IP-Symcon', 'password'))
     headers = {'content-type': 'application/json'}
 
-    payload = {
-        "method": method,
-        "params": parameters,
-        "jsonrpc": "2.0",
-        "id": 0,
-    }
+    payload = {'method': method, 'params': parameters, 'jsonrpc': '2.0', 'id': '0'}
     return requests.post(url, auth=auth, data=json.dumps(payload), headers=headers)
 
 def IPS_MediaExists(key):
@@ -47,13 +46,14 @@ def IPS_SetMediaContent(key):
         # http://www.ip-symcon.de/service/dokumentation/befehlsreferenz/variablenverwaltung/ips-getvariable/
         # Variablentyp (0: Boolean, 1: Integer, 2: Float, 3: String)
         elif type == 1:
-            image = open('image.jpg', 'wb')
+            fileName = get_file_name()
+            image = "/home/pi/Pictures/" + fileName
             camera = PiCamera()
             camera.start_preview()
-            sleep(2)
+            sleep(1)
             camera.capture(image)
-            image.close()
-            value = base64.b64encode(str(image))
+            camera.stop_preview()
+            value = str(base64.b64encode(open(image,"rb").read()).decode("ascii"))
             IPS('IPS_SetMediaContent', key, value)
             camera.close()
     except Exception as ex:
