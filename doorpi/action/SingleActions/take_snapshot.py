@@ -8,6 +8,7 @@ import subprocess as sub
 import os
 import datetime
 import glob
+from shutil import copyfile
 
 logger = logging.getLogger(__name__)
 logger.debug("%s loaded", __name__)
@@ -61,6 +62,8 @@ def get_snapshot_from_url(snapshot_path, url):
         for chunk in r.iter_content(1024):
             fd.write(chunk)
     conf.set_value(DOORPI_SECTION, 'last_snapshot', filename)
+    livecam = conf.get_string_parsed(DOORPI_SECTION, 'livecam', 'cam.jpg')
+    copyfile(filename, livecam)
     return filename
 
 
